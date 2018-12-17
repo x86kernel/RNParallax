@@ -52,6 +52,11 @@ const styles = StyleSheet.create({
     height: DEFAULT_HEADER_MAX_HEIGHT,
     resizeMode: 'cover',
   },
+  imageOverlay: {
+    ... StyleSheet.absoluteFillObject, 
+    width: null,
+    height: DEFAULT_HEADER_MAX_HEIGHT,
+  },
   bar: {
     backgroundColor: 'transparent',
     height: DEFAULT_HEADER_MIN_HEIGHT,
@@ -202,23 +207,35 @@ class RNParallax extends Component {
   }
 
   renderBackgroundImage() {
-    const { backgroundImage } = this.props;
+    const { backgroundImage, backgroundImageOverlayColor } = this.props;
     const imageOpacity = this.getImageOpacity();
     const imageTranslate = this.getImageTranslate();
     const imageScale = this.getImageScale();
 
     return (
-      <Animated.Image
-        style={[
-          styles.backgroundImage,
-          {
-            height: this.getHeaderMaxHeight(),
-            opacity: imageOpacity,
-            transform: [{ translateY: imageTranslate }, { scale: imageScale }],
-          },
-        ]}
-        source={backgroundImage}
-      />
+      <View>
+        <Animated.Image
+          style={[
+            styles.backgroundImage,
+            {
+              height: this.getHeaderMaxHeight(),
+              opacity: imageOpacity,
+              transform: [{ translateY: imageTranslate }, { scale: imageScale }],
+            },
+          ]}
+          source={backgroundImage}
+        />
+        {
+          backgroundImageOverlayColor ? (
+            <View 
+              style={[
+                styles.imageOverlay,
+                { backgroundColor: backgroundImageOverlayColor, },
+              ]}
+            />
+          ) : null
+        }
+      </View>
     );
   }
 
@@ -317,6 +334,7 @@ RNParallax.propTypes = {
   renderContent: PropTypes.func.isRequired,
   backgroundColor: PropTypes.string,
   backgroundImage: PropTypes.any,
+  backgroundImageOverlayColor: PropTypes.string,
   navbarColor: PropTypes.string,
   title: PropTypes.string,
   titleStyle: PropTypes.any,
@@ -334,6 +352,7 @@ RNParallax.defaultProps = {
   navbarColor: DEFAULT_NAVBAR_COLOR,
   backgroundColor: DEFAULT_BACKGROUND_COLOR,
   backgroundImage: null,
+  backgroundImageOverlayColor: null,
   title: '',
   titleStyle: styles.headerText,
   headerMaxHeight: DEFAULT_HEADER_MAX_HEIGHT,
